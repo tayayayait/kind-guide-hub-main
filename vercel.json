@@ -1,0 +1,6 @@
+﻿{
+  "rewrites": [
+    { "source": "/api/public/(.*)", "destination": "https://apis.data.go.kr/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -1,5 +1,7 @@
 import { ServiceItem } from "@/data/mockServices";
 import { getEstimatedPrice } from "@/data/standardPrices";
+import { getStreetViewUrl } from "@/lib/image";
+import { curatedImages } from "@/data/curatedImages";
 
 const API_KEY = import.meta.env.VITE_PUBLIC_DATA_API_KEY;
 
@@ -48,6 +50,7 @@ const mapFuneralHomeToService = (item: Element): ServiceItem => {
         id: `fh-${Math.random().toString(36).substr(2, 9)}`,
         title: name || "장례식장",
         location: location,
+        thumbnail: curatedImages[name] || getStreetViewUrl(location),
         distance: "",
         tags: tags,
         priceMin: priceRange.min,
@@ -119,6 +122,7 @@ const mapCremationToService = (item: Element): ServiceItem => {
         id: `cr-${Math.random().toString(36).substr(2, 9)}`,
         title: name || "화장시설",
         location: location,
+        thumbnail: curatedImages[name] || getStreetViewUrl(location),
         distance: "",
         tags: ["화장시설", gubun || "공공"].filter(Boolean),
         priceMin: priceRange.min, // 보통 화장비용은 훨씬 저렴하지만 로직 일관성을 위해 매핑
@@ -177,10 +181,13 @@ const mapSangjoToService = (item: any): ServiceItem => {
     // API 응답 필드 매핑 (명세서 기준)
     // conmNm: 상호명, rprsvNm: 대표자명, bzmnAddr: 사업자주소
     // bsnSttusNm: 영업상태, telno: 전화번호
+    const location = item.bzmnAddr || item.rnAddr || "주소 미상";
+
     return {
         id: `sj-${item.brno || item.opnSn || Math.random().toString(36).substr(2, 9)}`,
         title: item.conmNm || "상조업체",
-        location: item.bzmnAddr || item.rnAddr || "주소 미상",
+        location: location,
+        thumbnail: curatedImages[item.conmNm] || getStreetViewUrl(location),
         distance: "전국",
         tags: ["상조업체", item.bsnSttusNm || "공정위등록"].filter(Boolean),
         priceMin: 0,

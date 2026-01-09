@@ -1,4 +1,5 @@
 import { Check, Plus, MapPin, Star } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { TrustBadge, BadgeType } from "./TrustBadge";
 
@@ -13,9 +14,11 @@ interface ServiceCardProps {
   priceMax: number;
   trustType: BadgeType;
   description?: string;
+
   isSelected?: boolean;
   onToggleCompare?: (id: string) => void;
   onClick?: () => void;
+  serviceType?: string;
 }
 
 export function ServiceCard({
@@ -32,7 +35,10 @@ export function ServiceCard({
   isSelected = false,
   onToggleCompare,
   onClick,
+  serviceType,
 }: ServiceCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("ko-KR").format(price);
   };
@@ -53,15 +59,23 @@ export function ServiceCard({
         aria-label={`${title} 상세 보기`}
       >
         <div className="w-20 h-20 rounded-xl bg-muted flex-shrink-0 overflow-hidden relative">
-          {thumbnail ? (
+          {thumbnail && !imageError ? (
             <img
               src={thumbnail}
               alt={`${title} 이미지`}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs bg-muted/50">
-              이미지
+            <div className={`w-full h-full flex items-center justify-center text-muted-foreground bg-muted/50 ${imageError ? 'bg-gradient-to-br from-gray-100 to-gray-200' : ''
+              }`}>
+              {serviceType === 'funeral' ? (
+                <span className="text-2xl">🏢</span>
+              ) : serviceType === 'cremation' ? (
+                <span className="text-2xl">⚱️</span>
+              ) : (
+                <span className="text-2xl">🤝</span>
+              )}
             </div>
           )}
         </div>
